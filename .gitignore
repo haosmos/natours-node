@@ -118,6 +118,7 @@ web_modules/
 # dotenv environment variables file
 .env
 .env.test
+config.env
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
@@ -782,6 +783,3 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
-
-//
-//
