@@ -2,15 +2,17 @@
   "name": "natours",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prod": "NODE_ENV=production nodemon server.js"
   },
   "author": "chaosmos",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "mongoose": "^6.3.8",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
