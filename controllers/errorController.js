@@ -21,13 +21,20 @@ const handleValidationErrorDB = err => {
   return new AppError(message, 400);
 };
 
+const handleJWTError = () => new AppError('Invalid JWT token. Please try'
+                                           + ' log in again', 401);
+
+const handleJWTExpiredError = () => new AppError('You JWT token has'
+                                                  + ' expired! Please log in'
+                                                  + ' again!', 401);
+
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode)
      .json({
-       status:  err.status,
-       error:   err,
+       status: err.status,
+       error: err,
        message: err.message,
-       stack:   err.stack,
+       stack: err.stack,
      });
 };
 
@@ -36,7 +43,7 @@ const sendErrorProd = (err, res) => {
   if (err.isOperational) {
     res.status(err.statusCode)
        .json({
-         status:  err.status,
+         status: err.status,
          message: err.message
        });
     
@@ -48,7 +55,7 @@ const sendErrorProd = (err, res) => {
     // 2) Send generic message
     res.status(500)
        .json({
-         status:  'error',
+         status: 'error',
          message: 'Something went very wrong!'
        });
   }
@@ -69,6 +76,12 @@ module.exports = (err, req, res, next) => {
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (error.name === 'ValidationError') {
       error = handleValidationErrorDB(error);
+    }
+    if (error.name === 'JsonWebTokenError') {
+      error = handleJWTError();
+    }
+    if (error.name === 'TokenExpiredError') {
+      error = handleJWTExpiredError();
     }
     
     sendErrorProd(error, res);

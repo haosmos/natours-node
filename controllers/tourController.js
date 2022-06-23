@@ -19,7 +19,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
       .paginate();
   
   const tours = await features.query;
-  console.log(tours);
+  // console.log(tours);
   
   // send response
   res.status(200)
