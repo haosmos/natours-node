@@ -2,7 +2,7 @@ const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
 const AppError = require('./../utils/appError');
-const catchAsync = require('./../utils/catchAsync');
+const catchAsyncError = require('./../utils/catchAsyncError');
 
 const signToken = id => {
   return jwt.sign(
@@ -14,7 +14,7 @@ const signToken = id => {
   )
 }
 
-exports.signup = catchAsync(async (req, res, next) => {
+exports.signup = catchAsyncError(async (req, res, next) => {
   const newUser = await User.create({
     name: req.body.name,
     email: req.body.email,
@@ -35,7 +35,7 @@ exports.signup = catchAsync(async (req, res, next) => {
      });
 });
 
-exports.login = catchAsync(async (req, res, next) => {
+exports.login = catchAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
   
   // 1) Check if email and password exist
@@ -52,7 +52,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
   }
   
-  console.log(user);
+  //console.log(user);
   
   // 3) If everything ok, send token to a client
   const token = signToken(user._id);
@@ -63,10 +63,10 @@ exports.login = catchAsync(async (req, res, next) => {
        token
      })
   
-  console.log(user);
+  //console.log(user);
 });
 
-exports.protect = catchAsync(async (req, res, next) => {
+exports.protect = catchAsyncError(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
   if (req.headers.authorization
@@ -83,7 +83,7 @@ exports.protect = catchAsync(async (req, res, next) => {
       token,
       process.env.JWT_SECRET_KEY
   );
-  console.log(decoded);
+  //console.log(decoded);
   
   // 3) Check if the user still exists
   const currentUser = await User.findById(decoded.id);
@@ -113,4 +113,22 @@ exports.restrictTo = (...roles) => {
     
     next();
   }
+}
+
+exports.forgotPassword = catchAsyncError(async (req, res, next) => {
+  // 1) Get user based on POSTed email
+  const user = await User.findOne({ email: req.body.email })
+  if (!user) {
+    return next(new AppError('There is no user with that email', 404));
+  }
+  
+  // 2) Generate the random reset token
+  const resetToken = user.createPasswordResetToken()
+  await user.save({ validateBeforeSave: false });
+  
+  // 3) Send it to user's email
+});
+
+exports.resetPassword = (req, res, next) => {
+
 }

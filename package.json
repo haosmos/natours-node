@@ -17,10 +17,14 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.4.0",
     "morgan": "^1.10.0",
+    "pino-pretty": "^8.1.0",
     "slugify": "^1.6.5",
     "validator": "^13.7.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.16"
+    "@pinojs/json-colorizer": "^3.0.0",
+    "json-colorizer": "^2.2.2",
+    "nodemon": "^2.0.16",
+    "pino-http": "^8.0.1"
   }
 }
