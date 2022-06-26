@@ -6,22 +6,23 @@ const slugify = require('slugify');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
-  Object.keys(obj).forEach(el => {
-    if(allowedFields.includes(el)) newObj[el] = obj[el];
-  })
+  Object.keys(obj)
+        .forEach(el => {
+          if (allowedFields.includes(el)) newObj[el] = obj[el];
+        })
   return newObj;
 }
 
 exports.getAllUsers = catchAsyncError(async (req, res, next) => {
   const users = await User.find();
- 
+  
   // Send response
   res.status(200)
      .json({
-       status:  'success',
+       status: 'success',
        results: users.length,
        data: {
-        users
+         users
        }
      });
 });
@@ -33,7 +34,7 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
                              + ' use /updateMyPassword', 400));
   }
   
-  // 2) Filtered out unwanted fields that are not allowed to be updated
+  // 2) Filtered out unwanted fields that are not allowed to be updated 
   const filteredBody = filterObj(req.body, 'name', 'email');
   
   // 3) Update user document
@@ -42,18 +43,28 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
     runValidators: true
   });
   
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user: updatedUser
-    }
-  });
+  res.status(200)
+     .json({
+       status: 'success',
+       data: {
+         user: updatedUser
+       }
+     });
 });
+
+exports.deleteMe = catchAsyncError(async (req, res, next) => {
+  await User.findByIdAndUpdate(req.user.id, { active: false });
+  
+  res.status(204).json({
+    status: 'success',
+    data: null
+  })
+})
 
 exports.getUser = (req, res) => {
   res.status(500)
      .json({
-       status:  'error',
+       status: 'error',
        message: 'This route is not yet implemented'
      });
 };
@@ -61,7 +72,7 @@ exports.getUser = (req, res) => {
 exports.createUser = (req, res) => {
   res.status(500)
      .json({
-       status:  'error',
+       status: 'error',
        message: 'This route is not yet implemented'
      });
 };
@@ -69,7 +80,7 @@ exports.createUser = (req, res) => {
 exports.updateUser = (req, res) => {
   res.status(500)
      .json({
-       status:  'error',
+       status: 'error',
        message: 'This route is not yet implemented'
      });
 };
@@ -77,7 +88,7 @@ exports.updateUser = (req, res) => {
 exports.deleteUser = (req, res) => {
   res.status(500)
      .json({
-       status:  'error',
+       status: 'error',
        message: 'This route is not yet implemented'
      });
 };
