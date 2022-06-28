@@ -31,16 +31,18 @@ exports.getAllTours = catchAsyncError(async (req, res, next) => {
   // send response
   res.status(200)
      .json({
-       status:  'success',
+       status: 'success',
        results: tours.length,
-       data:    {
+       data: {
          tours: tours
        }
      });
 });
 
 exports.getTour = catchAsyncError(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+  const tour = await Tour.findById(req.params.id)
+                         .populate('reviews');
+  // Tour.findOne({ _id: req.params.id })
   
   if (!tour) {
     return next(new AppError('No tour found with that ID', 404));
@@ -49,7 +51,7 @@ exports.getTour = catchAsyncError(async (req, res, next) => {
   res.status(200)
      .json({
        status: 'success',
-       data:   {
+       data: {
          tour: tour
        }
      });
@@ -63,7 +65,7 @@ exports.createTour = catchAsyncError(async (req, res, next) => {
   res.status(201)
      .json({
        status: 'success',
-       data:   {
+       data: {
          tour: newTour
        }
      });
@@ -72,7 +74,7 @@ exports.createTour = catchAsyncError(async (req, res, next) => {
 exports.updateTour = catchAsyncError(async (req, res, next) => {
   const tour = await Tour.findByIdAndUpdate(
       req.params.id, req.body, {
-        new:           true,
+        new: true,
         runValidators: true
       });
   
@@ -83,7 +85,7 @@ exports.updateTour = catchAsyncError(async (req, res, next) => {
   res.status(200)
      .json({
        status: 'success',
-       data:   {
+       data: {
          tour
        }
      });
@@ -99,9 +101,8 @@ exports.deleteTour = catchAsyncError(async (req, res, next) => {
   res.status(204)
      .json({
        status: 'success',
-       data:   null
+       data: null
      });
-  ;
 });
 
 exports.getTourStats = catchAsyncError(async (req, res, next) => {
@@ -111,13 +112,13 @@ exports.getTourStats = catchAsyncError(async (req, res, next) => {
     },
     {
       $group: {
-        _id:        { $toUpper: '$difficulty' },
-        numTours:   { $sum: 1 },
+        _id: { $toUpper: '$difficulty' },
+        numTours: { $sum: 1 },
         numRatings: { $sum: '$ratingsQuantity' },
-        avgRating:  { $avg: '$ratingsAverage', },
-        avgPrice:   { $avg: '$price', },
-        minPrice:   { $min: '$price', },
-        maxPrice:   { $max: '$price', },
+        avgRating: { $avg: '$ratingsAverage', },
+        avgPrice: { $avg: '$price', },
+        minPrice: { $min: '$price', },
+        maxPrice: { $max: '$price', },
       }
     },
     {
@@ -131,7 +132,7 @@ exports.getTourStats = catchAsyncError(async (req, res, next) => {
   res.status(200)
      .json({
        status: 'success',
-       data:   { stats }
+       data: { stats }
      });
 });
 
@@ -153,9 +154,9 @@ exports.getMonthlyPlan = catchAsyncError(async (req, res, next) => {
         },
         {
           $group: {
-            _id:           { $month: '$startDates' },
+            _id: { $month: '$startDates' },
             numTourStarts: { $sum: 1 },
-            tours:         { $push: '$name' }
+            tours: { $push: '$name' }
           }
         },
         {
@@ -175,7 +176,7 @@ exports.getMonthlyPlan = catchAsyncError(async (req, res, next) => {
   res.status(200)
      .json({
        status: 'success',
-       data:   { plan }
+       data: { plan }
      })
   
 });
