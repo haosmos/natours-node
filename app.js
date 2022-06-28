@@ -21,8 +21,8 @@ app.use(helmet());
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-  // app.use(logger);
+  // app.use(morgan('dev'));
+  app.use(logger);
 }
 
 // Limit requests from same IP
@@ -48,12 +48,12 @@ app.use(xss());
 
 app.use(hpp({
   whitelist: [
-      'duration',
-      'ratingsAverage',
-      'ratingsQuantity',
-      'difficulty',
-      'price',
-      'maxGroupSize'
+    'duration',
+    'ratingsAverage',
+    'ratingsQuantity',
+    'difficulty',
+    'price',
+    'maxGroupSize'
   ]
 }));
 

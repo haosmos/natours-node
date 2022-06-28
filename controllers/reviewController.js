@@ -4,22 +4,33 @@ const catchAsyncError = require('./../utils/catchAsyncError');
 exports.getAllReviews = catchAsyncError(async (req, res, next) => {
   const reviews = await Review.find();
   
-  res.status(200).json({
-    status: 'success',
-    results: reviews.length,
-    data: {
-      reviews
-    }
-  });
+  res.status(200)
+     .json({
+       status: 'success',
+       results: reviews.length,
+       data: {
+         reviews
+       }
+     });
 });
 
 exports.createReview = catchAsyncError(async (req, res, next) => {
+  // Allow nested routes
+  if (!req.body.tour) {
+    req.body.tour = req.params.tourId;
+  }
+  
+  if (!req.body.user) {
+    req.body.user = req.user.id;
+  }
+  
   const newReview = await Review.create(req.body);
   
-  res.status(200).json({
-    status: 'success',
-    data: {
-      review: newReview
-    }
-  })
+  res.status(200)
+     .json({
+       status: 'success',
+       data: {
+         review: newReview
+       }
+     })
 })
