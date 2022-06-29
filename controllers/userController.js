@@ -3,6 +3,7 @@ const APIFeatures = require('./../utils/apiFeatures');
 const catchAsyncError = require('./../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 const slugify = require('slugify');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -13,20 +14,6 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 }
 
-exports.getAllUsers = catchAsyncError(async (req, res, next) => {
-  const users = await User.find();
-  
-  // Send response
-  res.status(200)
-     .json({
-       status: 'success',
-       results: users.length,
-       data: {
-         users
-       }
-     });
-});
-
 exports.updateMe = catchAsyncError(async (req, res, next) => {
   // 1) Create error if user POSTed password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -34,7 +21,7 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
                              + ' use /updateMyPassword', 400));
   }
   
-  // 2) Filtered out unwanted fields that are not allowed to be updated 
+  // 2) Filtered out unwanted fields that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
   
   // 3) Update user document
@@ -55,40 +42,24 @@ exports.updateMe = catchAsyncError(async (req, res, next) => {
 exports.deleteMe = catchAsyncError(async (req, res, next) => {
   await User.findByIdAndUpdate(req.user.id, { active: false });
   
-  res.status(204).json({
-    status: 'success',
-    data: null
-  })
-})
-
-exports.getUser = (req, res) => {
-  res.status(500)
+  res.status(204)
      .json({
-       status: 'error',
-       message: 'This route is not yet implemented'
-     });
-};
+       status: 'success',
+       data: null
+     })
+})
 
 exports.createUser = (req, res) => {
   res.status(500)
      .json({
        status: 'error',
-       message: 'This route is not yet implemented'
+       message: 'This route is not defined. Please use /signup instead.'
      });
 };
 
-exports.updateUser = (req, res) => {
-  res.status(500)
-     .json({
-       status: 'error',
-       message: 'This route is not yet implemented'
-     });
-};
+// do not update password with this
+exports.updateUser = factory.updateOne(User);
 
-exports.deleteUser = (req, res) => {
-  res.status(500)
-     .json({
-       status: 'error',
-       message: 'This route is not yet implemented'
-     });
-};
+exports.getUser = factory.getOne(User);
+exports.getAllUsers = factory.getAll(User);
+exports.deleteUser = factory.deleteOne(User);
