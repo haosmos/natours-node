@@ -1,5 +1,5 @@
 const express = require('express');
-const logger = require('./utils/logger')
+// const logger = require('./utils/logger')
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -21,8 +21,8 @@ app.use(helmet());
 
 // Development logging
 if (process.env.NODE_ENV === 'development') {
-  // app.use(morgan('dev'));
-  app.use(logger);
+  app.use(morgan('dev'));
+  // app.use(logger);
 }
 
 // Limit requests from same IP

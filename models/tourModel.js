@@ -137,7 +137,8 @@ const tourSchema = new mongoose.Schema(
       ],
       guides: [
         {
-          type: mongoose.Schema.Types.ObjectId,
+          // type: mongoose.Schema.Types.ObjectId,
+          type: mongoose.Schema.ObjectId,
           ref: 'User'
         }
       ]
@@ -147,6 +148,10 @@ const tourSchema = new mongoose.Schema(
       toObject: { virtuals: true }
     }
 );
+
+// tourSchema.index({ price: 1 });
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
 
 tourSchema.virtual('durationWeeks')
           .get(function () {
@@ -166,16 +171,21 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
-tourSchema.pre('save', async function (next) {
-  const guidesPromises = this.guides.map(async id => await User.findById(id));
-  this.guides = await Promise.all(guidesPromises);
-  next();
-});
-
 // tourSchema.pre('save', async function (next) {
 //   const guidesPromises = this.guides.map(async id => await
 // User.findById(id)); this.guides = await Promise.all(guidesPromises);
-// next(); });
+// console.log('guides is: ', this.guides);  next(); });
+
+tourSchema.pre('save', function (next) {
+  console.log('Will save document...');
+  next();
+});
+
+// tourSchema.post('save', function (doc, next) {
+//   // console.log(doc);
+//   // console.log('guides is: ', doc.guides);
+//   next();
+// });
 
 // QUERY middleware this points to QUERY OBJECT
 tourSchema.pre(/^find/, function (next) {
@@ -190,6 +200,8 @@ tourSchema.pre(/^find/, function (next) {
     path: 'guides',
     select: '-__v -passwordChangedAt'
   });
+  
+  // console.log('guides is: ', this.guides);
   
   next();
 })
