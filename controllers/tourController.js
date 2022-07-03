@@ -1,4 +1,4 @@
-const logger = require('./../utils/logger')
+// const logger = require('./../utils/logger')
 const Tour = require('./../models/tourModel');
 const catchAsyncError = require('./../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
