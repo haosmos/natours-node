@@ -7,6 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -23,6 +24,15 @@ app.set('views', path.join(__dirname, 'views'));
 // 1) MIDDLEWARES
 // Serving static files
 app.use(express.static(path.join(__dirname, 'public')));
+
+// app.use((req, res, next) => {
+//   res.setHeader('Access-Control-Allow-Origin', 'localhost:3000/');
+//   res.header(
+//       'Access-Control-Allow-Headers',
+//       'Origin, X-Requested-With, Content-Type, Accept'
+//   );
+//   next();
+// });
 
 // Set security HTTP headers
 // app.use(helmet());
@@ -61,6 +71,7 @@ app.use('/api', limiter);
 app.use(express.json({
   limit: '10kb'
 }));
+app.use(cookieParser());
 
 // Data sanitization against NoSQL injections
 app.use(mongoSanitize());
@@ -80,11 +91,11 @@ app.use(hpp({
 }));
 
 // Test middleware
-// app.use((req, res, next) => {
-//   req.log.info("let's have a look on request and response, dude!")
-//   // req.requestTime = new Date().toISOString();
-//   next();
-// });D
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  console.log(req.cookies);
+  next();
+})
 
 // 3) ROUTES
 app.use('/', viewRouter);
