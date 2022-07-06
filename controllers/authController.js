@@ -87,6 +87,17 @@ exports.login = catchAsyncError(async (req, res, next) => {
   //console.log(user);
 });
 
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true
+  });
+  res.status(200)
+     .json({
+       status: 'success'
+     })
+}
+
 exports.protect = catchAsyncError(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
@@ -127,33 +138,38 @@ exports.protect = catchAsyncError(async (req, res, next) => {
 })
 
 // Only for render pages, no errors
-exports.isLoggedIn = catchAsyncError(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
-    // 1) Verify TOKEN
-    const decoded = await promisify(jwt.verify)(
-        req.cookies.jwt,
-        process.env.JWT_SECRET_KEY
-    );
-    
-    console.log(decoded);
-    
-    // 2) Check if the user still exists
-    const currentUser = await User.findById(decoded.id);
-    if (!currentUser) {
+    try {
+      
+      // 1) Verify TOKEN
+      const decoded = await promisify(jwt.verify)(
+          req.cookies.jwt,
+          process.env.JWT_SECRET_KEY
+      );
+      
+      console.log(decoded);
+      
+      // 2) Check if the user still exists
+      const currentUser = await User.findById(decoded.id);
+      if (!currentUser) {
+        return next();
+      }
+      
+      // 3) Check if the user changes password after the token was issued
+      if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+      
+      // There is a logged user
+      res.locals.user = currentUser;
+      return next();
+    } catch (e) {
       return next();
     }
-    
-    // 3) Check if the user changes password after the token was issued
-    if (currentUser.changedPasswordAfter(decoded.iat)) {
-      return next();
-    }
-    
-    // There is a logged user
-    res.locals.user = currentUser;
-    return next();
   }
   next();
-})
+}
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
