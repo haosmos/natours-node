@@ -7,7 +7,8 @@
 		"prod": "NODE_ENV=production nodemon server.js",
 		"debug": "debug server.js",
 		"watch:js": "node ./public/js/esbuild/esbuild.dev.js",
-		"build:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js"
+		"dev:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundle/dev",
+		"build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundle/prod"
 	},
 	"author": "chaosmos",
 	"license": "ISC",
@@ -34,12 +35,16 @@
 		"xss-clean": "^0.1.1"
 	},
 	"devDependencies": {
+		"@parcel/compressor-brotli": "^2.6.2",
+		"@parcel/compressor-gzip": "^2.6.2",
+		"@parcel/optimizer-esbuild": "^2.6.2",
 		"@pinojs/json-colorizer": "^3.0.0",
 		"esbuild": "^0.14.48",
 		"esbuild-node-externals": "^1.4.1",
 		"json-colorizer": "^2.2.2",
 		"nodemon": "^2.0.16",
-		"parcel-bundler": "^1.12.4",
-		"pino-http": "^8.0.1"
+		"parcel": "^2.6.2",
+		"pino-http": "^8.0.1",
+		"process": "^0.11.10"
 	}
 }
