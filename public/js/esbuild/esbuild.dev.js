@@ -35,4 +35,4 @@ require('esbuild')
     .then(result => {
       console.log('watching...')
     })
-    .catch(() => process.exit(1))
+    .catch(() => process.exit(1));
