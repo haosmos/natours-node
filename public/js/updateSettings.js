@@ -18,6 +18,10 @@ export const updateSettings = async (data, type) => {
       showAlert('success', `${type.toUpperCase()} Data updated successfully!`)
     }
     
+    setTimeout(() => {
+      location.reload();
+    }, 900)
+    
   } catch (e) {
     showAlert('error', e.response.data.message)
   }
