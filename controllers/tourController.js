@@ -3,6 +3,64 @@ const Tour = require('./../models/tourModel');
 const catchAsyncError = require('./../utils/catchAsyncError');
 const AppError = require('./../utils/appError');
 const factory = require('./handlerFactory');
+const multer = require('multer');
+const sharp = require('sharp');
+
+const multerStorage = multer.memoryStorage();
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError('Not an image! Please upload only images.', 400), false);
+  }
+};
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+
+exports.uploadTourImages = upload.fields([
+  { name: 'imageCover', maxCount: 1 },
+  { name: 'images', maxCount: 3 }
+]);
+
+exports.resizeTourImages = catchAsyncError(async (req, res, next) => {
+  
+  if (!req.files.imageCover || !req.files.images) {
+    return next();
+  }
+  
+  // 1) Cover image
+  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+  await sharp(req.files.imageCover[0].buffer)
+      .resize(2000, 1333)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/tours/${req.body.imageCover}`);
+  
+  // 2) Images
+  req.body.images = [];
+  
+  await Promise.all(
+      req.files.images.map(async (file, i) => {
+        const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+        
+        await sharp(file.buffer)
+            .resize(2000, 1333)
+            .toFormat('jpeg')
+            .jpeg({ quality: 90 })
+            .toFile(`public/img/tours/${filename}`);
+        
+        req.body.images.push(filename);
+      })
+  );
+  
+  console.log(req.body);
+  
+  next();
+});
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -19,9 +77,7 @@ exports.deleteTour = factory.deleteOne(Tour);
 
 exports.getTourStats = catchAsyncError(async (req, res, next) => {
   const stats = await Tour.aggregate([
-    {
-      $match: { ratingsAverage: { $gte: 4.5 } }
-    },
+    { $match: { ratingsAverage: { $gte: 4.5 } } },
     {
       $group: {
         _id: { $toUpper: '$difficulty' },
@@ -33,9 +89,7 @@ exports.getTourStats = catchAsyncError(async (req, res, next) => {
         maxPrice: { $max: '$price', },
       }
     },
-    {
-      $sort: { avgPrice: 1 }
-    },
+    { $sort: { avgPrice: 1 } },
     // {
     //   $match: { _id: { $ne: 'EASY' } }
     // }
@@ -53,9 +107,7 @@ exports.getMonthlyPlan = catchAsyncError(async (req, res, next) => {
   
   const plan = await Tour.aggregate(
       [
-        {
-          $unwind: '$startDates'
-        },
+        { $unwind: '$startDates' },
         {
           $match: {
             startDates: {
@@ -72,17 +124,21 @@ exports.getMonthlyPlan = catchAsyncError(async (req, res, next) => {
           }
         },
         {
-          $addFields: { month: '$_id' }
+          $addFields: {
+            month: '$_id'
+          }
         },
         {
-          $project: { _id: 0 }
+          $project: {
+            _id: 0
+          }
         },
         {
-          $sort: { numTourStarts: -1 }
+          $sort: {
+            numTourStarts: -1
+          }
         },
-        {
-          $limit: 12
-        }
+        { $limit: 12 }
       ]);
   
   res.status(200)
