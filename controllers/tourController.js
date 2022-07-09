@@ -1,10 +1,10 @@
 // const logger = require('./../utils/logger')
-const Tour = require('./../models/tourModel');
-const catchAsyncError = require('./../utils/catchAsyncError');
-const AppError = require('./../utils/appError');
-const factory = require('./handlerFactory');
 const multer = require('multer');
 const sharp = require('sharp');
+const Tour = require('./../models/tourModel');
+const catchAsyncError = require('./../utils/catchAsyncError');
+const factory = require('./handlerFactory');
+const AppError = require('./../utils/appError');
 
 const multerStorage = multer.memoryStorage();
 

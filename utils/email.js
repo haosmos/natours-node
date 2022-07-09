@@ -13,7 +13,13 @@ module.exports = class Email {
   newTransport() {
     if (process.env.NODE_ENV === 'production') {
       // sendgrid
-      return 1;
+      return nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.GMAILSEND_USERNAME,
+          pass: process.env.GMAILSEND_PASSWORD
+        }
+      })
     }
     
     return nodemailer.createTransport({
@@ -54,5 +60,12 @@ module.exports = class Email {
   
   async sendWelcome() {
     await this.send('welcome', 'Welcome to the Natours Family!');
+  }
+  
+  async sendPasswordReset() {
+    await this.send(
+        'passwordReset',
+        'Your password reset token (valid for only 10 minutes)'
+    )
   }
 }
