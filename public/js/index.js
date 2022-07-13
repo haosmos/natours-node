@@ -43,7 +43,7 @@ if (userDataForm) {
     // const email = document.getElementById('email').value;
     // const name = document.getElementById('name').value;
     form.append('photo', document.getElementById('photo').files[0]);
-    console.log(form);
+    // console.log(form);
     
     updateSettings(form, 'data');
   })

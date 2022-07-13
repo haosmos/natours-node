@@ -57,7 +57,7 @@ exports.resizeTourImages = catchAsyncError(async (req, res, next) => {
       })
   );
   
-  console.log(req.body);
+  // console.log(req.body);
   
   next();
 });
@@ -170,7 +170,7 @@ exports.getToursWithin = catchAsyncError(async (req, res, next) => {
     }
   });
   
-  console.log(distance, lat, lng, unit);
+  // console.log(distance, lat, lng, unit);
   
   res.status(200)
      .json({
