@@ -1503,13 +1503,13 @@ body {
 }
 
 .swiper-button-prev::after {
-  margin-left: 5rem;
-  color: #88ff89;
+  margin-left: 15rem;
+  color: #e7e754;
 }
 
 .swiper-button-next::after {
-  margin-right: 5rem;
-  color: #88ff89;
+  margin-right: 15rem;
+  color: #e7e754;
 }
 
 @media (max-width: 60rem) {
