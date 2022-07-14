@@ -3,7 +3,7 @@ const { nodeExternalsPlugin } = require('esbuild-node-externals');
 require('esbuild')
     .build({
       entryPoints: [ './public/js/index.js' ],
-      outfile: './public/js/bundle.js',
+      outfile: './public/js/bundleDev.js',
       format: 'esm',
       // banner: {
       //   js: 'import { createRequire as topLevelCreateRequire } from
