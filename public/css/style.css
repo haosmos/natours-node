@@ -1,5 +1,6 @@
 /*@import './../node_modules/swiper/swiper-bundle.min.css';*/
 /*@import 'swiper/css/navigation';*/
+@import './swiper-bundle.min.css';
 
 :root {
   --section-rotate: 9vw;
