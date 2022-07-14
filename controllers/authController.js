@@ -47,7 +47,7 @@ const createSendToken = (user, statusCode, res) => {
      });
 }
 
-exports.signup = catchAsyncError(async (req, res, next) => {
+exports.signUp = catchAsyncError(async (req, res, next) => {
   // const url = 'http://localhost:3000/me';
   
   const newUser = await User.create({

@@ -3,6 +3,8 @@ import { login, logout }  from './login';
 import { displayMap }     from './mapbox';
 import { updateSettings } from './updateSettings';
 import { bookTour }       from './stripe';
+import { signUp }         from './signUp';
+import swiper             from './reviewsSlider';
 
 // DOM Elements
 const mapBox = document.getElementById('map');
@@ -11,6 +13,7 @@ const logOutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const bookBtn = document.getElementById('book-tour');
+const signUpForm = document.querySelector('.signup-form');
 
 // delegation
 if (mapBox) {
@@ -18,6 +21,25 @@ if (mapBox) {
   let locations = JSON.parse(mapBox.dataset.locations);
   
   displayMap(locations);
+}
+
+if (signUpForm) {
+  signUpForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Change button text while Signing up a new user
+    document.querySelector('.btn--signup').innerText = 'Signing...';
+    
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('password-confirm').value;
+    await signUp(name, email, password, passwordConfirm);
+    
+    // Change button text and clear input-fields after Signing up new user
+    document.querySelector('.btn--signup').innerText = 'Sign Up';
+    signUpForm.reset();
+  });
 }
 
 if (loginForm) {

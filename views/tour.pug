@@ -73,9 +73,14 @@ block content
 		#map(data-locations=`${JSON.stringify(tour.locations)}`)
 
 	section.section-reviews
-		.reviews
-			each review in tour.reviews
-				+reviewCard(review)
+		.swiper.reviews
+			.swiper-wrapper
+				each review in tour.reviews
+					+reviewCard(review)
+
+
+		.swiper-button-prev
+		.swiper-button-next
 
 	section.section-cta
 		.cta
