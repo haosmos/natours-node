@@ -19,7 +19,6 @@
 		"compression": "^1.7.4",
 		"cookie-parser": "^1.4.6",
 		"dotenv": "^16.0.1",
-		"embla-carousel": "^7.0.0-rc04",
 		"express": "^4.18.1",
 		"express-mongo-sanitize": "^2.2.0",
 		"express-rate-limit": "^6.4.0",
