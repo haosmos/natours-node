@@ -5,7 +5,7 @@ import Swiper, { Navigation } from 'swiper';
 // import 'swiper/css/navigation';
 
 // init Swiper:
-export const swiper = new Swiper('.reviews', {
+const swiper = new Swiper('.reviews', {
   // configure Swiper to use modules
   modules: [ Navigation ],
   slidesPerView: 'auto',
@@ -30,7 +30,7 @@ export const swiper = new Swiper('.reviews', {
     
     1920: {
       slidesPerView: 5,
-      spaceBetween: 40,
+      spaceBetween: 45,
     }
     
   },
@@ -45,3 +45,7 @@ export const swiper = new Swiper('.reviews', {
   //   el: '.swiper-scrollbar',
   // }
 });
+
+console.log('swiper was loaded');
+
+export default swiper;
