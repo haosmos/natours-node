@@ -9,6 +9,7 @@
 		"debug": "debug server.js",
 		"watch:js": "node ./public/js/esbuild/esbuild.dev.js",
 		"dev:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundle/dev",
+		"build": "parcel build ./public/js/index.js --dist-dir ./public/js/bundle/prod",
 		"build:js": "node ./public/js/esbuild/esbuild.js"
 	},
 	"author": "chaosmos",
