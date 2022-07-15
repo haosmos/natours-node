@@ -9,8 +9,9 @@
 		"debug": "debug server.js",
 		"watch:js": "node ./public/js/esbuild/esbuild.dev.js",
 		"dev:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundle/dev",
-		"build": "parcel build ./public/js/index.js --dist-dir ./public/js/bundle/prod",
-		"build:js": "node ./public/js/esbuild/esbuild.js"
+		"build": "npm run build:js:prod",
+		"build:js:dev": "npx cross-env NODE_ENV=development node ./public/js/esbuild/esbuild.dev.js",
+		"build:js:prod": "npx cross-env NODE_ENV=production node ./public/js/esbuild/esbuild.js"
 	},
 	"author": "chaosmos",
 	"license": "ISC",
