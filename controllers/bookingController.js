@@ -4,6 +4,7 @@ const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
 const catchAsyncError = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
+const AppError = require('../utils/appError');
 
 exports.getCheckoutSession = catchAsyncError(async (req, res, next) => {
   // 1) Get the currently booked tour
@@ -56,14 +57,24 @@ exports.getCheckoutSession = catchAsyncError(async (req, res, next) => {
 
 const createBookingCheckout = async session => {
   const tour = session.client_reference_id;
+  
+  if (!session.customer_email) {
+    throw new AppError('No user information found', 500)
+  }
+  
   const user = (
       await User.findOne({ email: session.customer_email })
   ).id;
+  
+  if (!user.customer_email) {
+    throw new AppError('No user found', 404)
+  }
+  
   const price = session.display_items[0].amount / 100;
   await Booking.create({ tour, user, price });
 }
 
-exports.webhookCheckout = (req, res, next) => {
+exports.webhookCheckout = catchAsyncError(async (req, res, next) => {
   const signature = req.headers['stripe-signature'];
   
   let event;
@@ -79,14 +90,14 @@ exports.webhookCheckout = (req, res, next) => {
   }
   
   if (event.type === 'checkout.session.completed') {
-    createBookingCheckout(event.data.object);
+    await createBookingCheckout(event.data.object);
   }
   
   res.status(200)
      .json({
        received: true
      })
-}
+});
 
 exports.createBooking = factory.createOne(Booking);
 exports.getBooking = factory.getOne(Booking);
