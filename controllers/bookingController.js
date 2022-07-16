@@ -1,10 +1,14 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const Stripe = require('stripe');
 const Tour = require('../models/tourModel');
 const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
 const catchAsyncError = require('../utils/catchAsyncError');
 const factory = require('./handlerFactory');
 const AppError = require('../utils/appError');
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: '2020-08-27',
+});
 
 exports.getCheckoutSession = catchAsyncError(async (req, res, next) => {
   // 1) Get the currently booked tour
@@ -34,9 +38,9 @@ exports.getCheckoutSession = catchAsyncError(async (req, res, next) => {
     ]
   })
   
-  let user = (
-      await User.findOne({ email: session.customer_email })
-  ).id;
+  // let user = (
+  //     await User.findOne({ email: session.customer_email })
+  // ).id;
   console.log(user);
   // console.log(session);
   // 3) Create session as response
@@ -68,20 +72,16 @@ const createBookingCheckout = async session => {
   }
   
   // let user = await User.findOne({ email: session.customer_email });
-  let user = await User.findOne({ email: session.customer_email });
-  
-  user = user.id;
-  
+  const userInfo = await User.findOne({ email: session.customer_email })
+  console.log(userInfo);
+  const user = userInfo._id
+  console.log(userInfo);
   if (!user.customer_email) {
     throw new AppError('No user found', 404)
   }
   
   const price = session.amount_total / 100;
   await Booking.create({ tour, user, price });
-  
-  console.log('user is: ', user);
-  console.log('tour is: ', tour);
-  console.log('price: ', price);
 }
 
 exports.webhookCheckout = catchAsyncError(async (req, res, next) => {
@@ -103,6 +103,7 @@ exports.webhookCheckout = catchAsyncError(async (req, res, next) => {
   if (event.type === 'checkout.session.completed') {
     await createBookingCheckout(event.data.object);
   }
+  console.log(event);
   
   res.status(200)
      .json({ received: true })
