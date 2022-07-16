@@ -70,17 +70,23 @@ const createBookingCheckout = async session => {
     throw new AppError('No user found', 404)
   }
   
-  const price = session.display_items[0].amount / 100;
-  await Booking.create({ tour, user, price });
+  const price = session.amount_total / 100;
+  const newBooking = await Booking.create({ tour, user, price });
+  
+  console.log('newBooking is: ', newBooking);
+  console.log('user is: ', user);
+  console.log('tour is: ', tour);
+  console.log('price: ', price);
 }
 
 exports.webhookCheckout = catchAsyncError(async (req, res, next) => {
   const signature = req.headers['stripe-signature'];
+  console.log(signature);
   
   let event;
   try {
     event = stripe.webhooks.constructEvent(
-        req.body,
+        req.rawBody,
         signature,
         process.env.STRIPE_WEBHOOK_SECRET
     );
@@ -94,9 +100,7 @@ exports.webhookCheckout = catchAsyncError(async (req, res, next) => {
   }
   
   res.status(200)
-     .json({
-       received: true
-     })
+     .json({ received: true })
 });
 
 exports.createBooking = factory.createOne(Booking);
