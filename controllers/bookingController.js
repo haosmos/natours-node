@@ -75,7 +75,7 @@ const createBookingCheckout = async session => {
   // const user = userInfo._id
   
   if (!user.customer_email) {
-    throw new AppError('No user found', 404)
+    throw new AppError('No user found!!! Sorry, please!!!', 404)
   }
   
   const price = session.amount_total / 100;
