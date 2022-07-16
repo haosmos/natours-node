@@ -34,11 +34,6 @@ exports.getCheckoutSession = catchAsyncError(async (req, res, next) => {
     ]
   })
   
-  let user = (
-      await User.findOne({ email: session.customer_email })
-  ).id;
-  // console.log(user);
-  // console.log(session);
   // 3) Create session as response
   res.status(200)
      .json({

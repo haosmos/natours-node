@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const compression = require('compression');
 const cors = require('cors');
 
@@ -83,7 +84,7 @@ app.use('/api', limiter);
 
 app.post(
     '/webhook-checkout',
-    express.raw({ type: 'application/json' }),
+    bodyParser.raw({ type: 'application/json' }),
     bookingController.webhookCheckout
 );
 
