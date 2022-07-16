@@ -62,18 +62,17 @@ const createBookingCheckout = async session => {
     throw new AppError('No user information found', 500)
   }
   
-  const user = (
-      await User.findOne({ email: session.customer_email })
-  ).id;
+  let user = await User.findOne({ email: session.customer_email });
+  
+  user = user._id;
   
   if (!user.customer_email) {
     throw new AppError('No user found', 404)
   }
   
   const price = session.amount_total / 100;
-  const newBooking = await Booking.create({ tour, user, price });
+  await Booking.create({ tour, user, price });
   
-  console.log('newBooking is: ', newBooking);
   console.log('user is: ', user);
   console.log('tour is: ', tour);
   console.log('price: ', price);
