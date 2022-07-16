@@ -64,7 +64,7 @@ const createBookingCheckout = async session => {
   
   let user = await User.findOne({ email: session.customer_email });
   
-  user = user._id;
+  user = user.id;
   
   if (!user.customer_email) {
     throw new AppError('No user found', 404)
