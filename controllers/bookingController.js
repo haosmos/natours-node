@@ -37,7 +37,7 @@ exports.getCheckoutSession = catchAsyncError(async (req, res, next) => {
   // let user = (
   //     await User.findOne({ email: session.customer_email })
   // ).id;
-  console.log(user);
+  // console.log(user);
   // console.log(session);
   // 3) Create session as response
   res.status(200)
@@ -68,10 +68,12 @@ const createBookingCheckout = async session => {
   }
   
   // let user = await User.findOne({ email: session.customer_email });
-  const userInfo = await User.findOne({ email: session.customer_email })
-  console.log(userInfo);
-  const user = userInfo._id
-  console.log(userInfo);
+  let user = (
+      await User.findOne({ email: session.customer_email })
+  ).id;
+  console.log(user);
+  // const user = userInfo._id
+  
   if (!user.customer_email) {
     throw new AppError('No user found', 404)
   }
