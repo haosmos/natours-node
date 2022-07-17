@@ -65,6 +65,7 @@ const createBookingCheckout = async session => {
   
   // let user = await User.findOne({ email: session.customer_email });
   let user = await User.findOne({ email: session.customer_email });
+  user = user.id
   console.log(user);
   // const user = userInfo._id
   
