@@ -84,7 +84,6 @@ app.use('/api', limiter);
 
 app.post(
     '/webhook-checkout',
-    express.raw(),
     bookingController.webhookCheckout
 );
 
