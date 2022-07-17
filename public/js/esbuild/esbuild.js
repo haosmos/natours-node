@@ -1,4 +1,4 @@
-const { nodeExternalsPlugin } = require('esbuild-node-externals');
+// const { nodeExternalsPlugin } = require('esbuild-node-externals');
 
 require('esbuild')
     .build({
