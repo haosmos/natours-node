@@ -9,13 +9,13 @@ require('esbuild')
       minify: process.env.NODE_ENV === 'production',
       platform: 'browser',
       
-      plugins: [
-        nodeExternalsPlugin({
-          packagePath: './package.json',
-          dependencies: false,
-          devDependencies: true,
-        })
-      ],
+      // plugins: [
+      //   nodeExternalsPlugin({
+      //     packagePath: './package.json',
+      //     dependencies: false,
+      //     devDependencies: true,
+      //   })
+      // ],
       logLevel: 'info',
       target: 'node16',
     })
