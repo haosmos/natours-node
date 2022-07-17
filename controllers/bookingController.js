@@ -43,67 +43,65 @@ exports.getCheckoutSession = catchAsyncError(async (req, res, next) => {
      })
 });
 
-// exports.createBookingCheckout = catchAsyncError(async (req, res, next) => {
-//   // This is only TEMPORARY, because it's UNSECURE: everyone can make
-//   // bookings without paying
-//   const { tour, user, price } = req.query;
-//   if (!tour && !user && !price) {
-//     return next();
+exports.createBookingCheckout = catchAsyncError(async (req, res, next) => {
+  // This is only TEMPORARY, because it's UNSECURE: everyone can make
+  // bookings without paying
+  const { tour, user, price } = req.query;
+  if (!tour && !user && !price) {
+    return next();
+  }
+  
+  await Booking.create({ tour, user, price });
+  
+  res.redirect(req.originalUrl.split('?')[0]);
+});
+
+// const createBookingCheckout = async session => {
+//   const tour = session.client_reference_id;
+//
+//   if (!session.customer_email) {
+//     throw new AppError('No user information found', 500)
 //   }
 //
-//   await Booking.create({ tour, user, price });
+//   let user = (
+//       await User.findOne({ email: session.customer_email })
+//   ).id;
+//   console.log(user);
 //
-//   res.redirect(req.originalUrl.split('?')[0]);
+//   if (!user.customer_email) {
+//     throw new AppError(
+//         `No user ${user.customer_email}; found!!! Sorry, please!!!`,
+//         404
+//     )
+//   }
+//
+//   const price = session.amount_total / 100;
+//   await Booking.create({ tour, user, price });
+// }
+
+// exports.webhookCheckout = catchAsyncError(async (req, res, next) => {
+//   const signature = req.headers['stripe-signature'];
+//
+//   let event;
+//   try {
+//     event = stripe.webhooks.constructEvent(
+//         req.body,
+//         signature,
+//         process.env.STRIPE_WEBHOOK_SECRET
+//     );
+//   } catch (e) {
+//     return res.status(400)
+//               .send(`Webhook error: ${e.message}`);
+//   }
+//
+//   if (event.type === 'checkout.session.completed') {
+//     await createBookingCheckout(event.data.object);
+//   }
+//   console.log(event);
+//
+//   res.status(200)
+//      .json({ received: true })
 // });
-
-const createBookingCheckout = async session => {
-  const tour = session.client_reference_id;
-  
-  if (!session.customer_email) {
-    throw new AppError('No user information found', 500)
-  }
-  
-  // let user = await User.findOne({ email: session.customer_email });
-  let user = await User.findOne({ email: session.customer_email });
-  user = user.id
-  console.log(user);
-  // const user = userInfo._id
-  
-  if (!user.customer_email) {
-    throw new AppError(
-        `No user ${user.customer_email}; found!!! Sorry, please!!!`,
-        404
-    )
-  }
-  
-  const price = session.amount_total / 100;
-  await Booking.create({ tour, user, price });
-}
-
-exports.webhookCheckout = catchAsyncError(async (req, res, next) => {
-  const signature = req.headers['stripe-signature'];
-  // console.log(signature);
-  
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(
-        req.body,
-        signature,
-        process.env.STRIPE_WEBHOOK_SECRET
-    );
-  } catch (e) {
-    return res.status(400)
-              .send(`Webhook error: ${e.message}`);
-  }
-  
-  if (event.type === 'checkout.session.completed') {
-    await createBookingCheckout(event.data.object);
-  }
-  console.log(event);
-  
-  res.status(200)
-     .json({ received: true })
-});
 
 exports.createBooking = factory.createOne(Booking);
 exports.getBooking = factory.getOne(Booking);
