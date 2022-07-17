@@ -67,10 +67,11 @@ app.use(
 )
 
 // Development logging
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-  // app.use(logger);
-}
+app.use(morgan('combined'));
+// if (process.env.NODE_ENV === 'development') {
+//   app.use(morgan('combined'));
+//   // app.use(logger);
+// }
 
 // Limit requests from same IP
 const limiter = rateLimit({
@@ -82,11 +83,11 @@ const limiter = rateLimit({
 
 app.use('/api', limiter);
 
-// app.post(
-//     '/webhook-checkout',
-//     express.raw({ type: 'application/json' }),
-//     bookingController.webhookCheckout
-// );
+app.post(
+    '/webhook-checkout',
+    express.raw({ type: 'application/json' }),
+    bookingController.webhookCheckout
+);
 
 // Body parser, reading data from body into req.body
 app.use(express.json({
