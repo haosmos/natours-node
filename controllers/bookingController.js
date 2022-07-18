@@ -33,7 +33,6 @@ exports.getCheckoutSession = catchAsyncError(async (req, res, next) => {
       }
     ]
   })
-  // console.log(session);
   // 3) Create session as response
   res.status(200)
      .json({
@@ -62,21 +61,14 @@ const createBookingCheckout = async session => {
     throw new AppError('No user information found', 500)
   }
   
-  const user = (
-      await User.findOne({ email: session.customer_email })
-  ).id;
+  const user = await User.findOne({ email: session.customer_email });
   
-  if (!user.customer_email) {
+  if (!user) {
     throw new AppError('No user found', 404)
   }
   
   const price = session.amount_total / 100;
-  const newBooking = await Booking.create({ tour, user, price });
-  
-  console.log('newBooking is: ', newBooking);
-  console.log('user is: ', user);
-  console.log('tour is: ', tour);
-  console.log('price: ', price);
+  await Booking.create({ tour, user, price });
 }
 
 exports.webhookCheckout = catchAsyncError(async (req, res, next) => {
@@ -86,7 +78,7 @@ exports.webhookCheckout = catchAsyncError(async (req, res, next) => {
   let event;
   try {
     event = stripe.webhooks.constructEvent(
-        req.rawBody,
+        req.body,
         signature,
         process.env.STRIPE_WEBHOOK_SECRET
     );

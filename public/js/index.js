@@ -4,7 +4,6 @@ import { displayMap }     from './mapbox';
 import { updateSettings } from './updateSettings';
 import { bookTour }       from './stripe';
 import { signUp }         from './signUp';
-// import swiperBundle       from './swiper-bundle.min';
 import swiper             from './reviewsSlider';
 
 // DOM Elements
@@ -18,7 +17,6 @@ const signUpForm = document.querySelector('.signup-form');
 
 // delegation
 if (mapBox) {
-  // console.log(mapBox);
   let locations = JSON.parse(mapBox.dataset.locations);
   
   displayMap(locations);
@@ -100,5 +98,3 @@ if (bookBtn) {
     bookTour(tourId);
   })
 }
-
-// console.log('bundle was loaded successfully!!');
