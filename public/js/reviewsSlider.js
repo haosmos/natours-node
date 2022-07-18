@@ -46,6 +46,4 @@ const swiper = new Swiper('.reviews', {
   // }
 });
 
-// console.log('swiper was loaded');
-
 export default swiper;
