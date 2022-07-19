@@ -1,8 +1,6 @@
 import axios         from 'axios';
 import { showAlert } from './alert';
 
-if (true) { throw new Error() }
-
 const stripe = Stripe(
     'pk_test_51LJadxCOpTT3xkBxeE5MTRWS6JZHtyEEt1qx4DqPLeM4N6f7nseAOHDEeA6q0HCsCIJiFRuTXohZcDNJDSrHZgJR00eBPke8YJ');
 
