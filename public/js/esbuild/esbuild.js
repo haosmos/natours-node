@@ -17,7 +17,7 @@ require('esbuild')
         })
       ],
       logLevel: 'info',
-      target: 'node16',
+      target: 'node18',
     })
     .then(() => console.log('⚡ Done'))
-    .catch(() => process.exit(1))
+    .catch(() => process.exit(1));
